@@ -12,10 +12,15 @@ I think this ruby solution is a little less shitty.
 
 ## Usage
 
-* $ t push work 'do stuff'
-* $ t slice work 0
-* if you had 7 work tasks and you wanted to move the seventh to 0...
-* $ t move work 7 0
-* $ t update work 0 "this task was written badly so I'm rewriting it."
-* $ t print
-* $ t p # alias for print
+$ t push work 'do stuff'
+
+$ t slice work 0
+
+if you had 7 work tasks and you wanted to move the seventh to 0...
+$ t move work 7 0
+
+$ t update work 0 "this task was written badly so I'm rewriting it."
+
+$ t print
+
+$ t p # alias for print
