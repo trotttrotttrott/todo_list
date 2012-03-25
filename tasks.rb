@@ -8,7 +8,7 @@ class Tasks
   end
 
   def before_filter(method, group, *arguments)
-    if group.nil? || is_group?(group)
+    if group.nil? || is_group?(group) || group == 'push'
       self.send(method, group, *arguments)
       print unless ['p', 'print'].include? method
     end
