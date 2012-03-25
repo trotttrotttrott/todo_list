@@ -4,7 +4,14 @@ class Tasks
 
   def initialize(method, *arguments)
     @db = FSDB::Database.new('~/tasks/db')
-    self.send(method, arguments.slice!(0), *arguments)
+    before_filter(method, arguments.slice!(0), *arguments)
+  end
+
+  def before_filter(method, group, *arguments)
+    if group.nil? || is_group?(group)
+      self.send(method, group, *arguments)
+      print unless ['p', 'print'].include? method
+    end
   end
 
   def push(group, *tasks)
@@ -14,7 +21,6 @@ class Tasks
         a << task
       end
     end
-    print
   end
 
   def slice(group, index)
@@ -24,31 +30,27 @@ class Tasks
       group_tasks = a
     end
     @db.delete group if group_tasks.empty?
-    print
   end
 
   def move(group, *arguments)
-    if is_group?(group)
-      group_tasks = []
-      target_task = nil
-      @db.edit group do |a|
-        target_task = a.slice!(arguments[0].to_i)
-        group_tasks = a
-      end
-      @db[group].delete group
-      @db[group] = group_tasks.insert(arguments[1].to_i, target_task)
-      print
+    @db.edit group do |a|
+      target_task = a.slice!(arguments[0].to_i)
+      a.insert(arguments[1].to_i, target_task)
+    end
+  end
+
+  def update(group, *arguments)
+    @db.edit group do |a|
+      a[arguments[0].to_i] = arguments[1]
     end
   end
 
   def print(*arguments)
     groups = arguments.any? ? arguments : @db.fetch('/')
     groups.each do |group|
-      if is_group?(group)
-        puts "\n#{group}"
-        @db[group].each_with_index do |task, i|
-          puts "#{i}. #{task}"
-        end
+      puts "\n#{group}"
+      @db[group].each_with_index do |task, i|
+        puts "#{i}. #{task}"
       end
     end
     puts "\n"
