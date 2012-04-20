@@ -23,14 +23,18 @@ class Tasks
     end
   end
 
-  def slice(group, index)
+  def slice(group, *indexes)
     group_tasks = []
     @db.edit group do |a|
-      a.slice!(index.to_i)
+      indexes.reverse.each do |index|
+        a.slice!(index.to_i)
+      end
       group_tasks = a
     end
     @db.delete group if group_tasks.empty?
   end
+
+  alias :s :slice
 
   def move(group, *arguments)
     @db.edit group do |a|
@@ -39,11 +43,15 @@ class Tasks
     end
   end
 
+  alias :m :move
+
   def update(group, *arguments)
     @db.edit group do |a|
       a[arguments[0].to_i] = arguments[1]
     end
   end
+
+  alias :u :update
 
   def print(*arguments)
     groups = arguments.any? ? arguments : @db.fetch('/')
