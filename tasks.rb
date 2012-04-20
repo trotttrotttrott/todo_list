@@ -48,9 +48,9 @@ class Tasks
   def print(*arguments)
     groups = arguments.any? ? arguments : @db.fetch('/')
     groups.each do |group|
-      puts "\n#{group}"
+      puts "\n<<<< #{group}"
       @db[group].each_with_index do |task, i|
-        puts "#{i}. #{task}"
+        puts "  #{i}. #{task}"
       end
     end
     puts "\n"
